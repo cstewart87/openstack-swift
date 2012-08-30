@@ -11,7 +11,7 @@ module Openstack
       #   x-storage-token
       #   x-auth-token
       def auth(proxy, user, password)
-	token = proxy.split("_")[1]
+	token = "c083a306083f4d9eb6be2aedf713be6d"
         res = HTTParty.get(proxy, :headers => {"X-Auth-User" => user, "X-Auth-Key" => password, "X-Auth-Token" => token})
         raise AuthenticationError unless res.code == 200
 
