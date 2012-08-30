@@ -10,12 +10,12 @@ module Openstack
       #   x-storage-url
       #   x-storage-token
       #   x-auth-token
-      def auth(proxy, user, password)
-	token = "c083a306083f4d9eb6be2aedf713be6d"
+      def auth(proxy, user, password, token)
         res = HTTParty.get(proxy, :headers => {"X-Auth-User" => user, "X-Auth-Key" => password, "X-Auth-Token" => token})
         raise AuthenticationError unless res.code == 200
 
-        [res.headers["x-storage-url"],res.headers["x-storage-token"],res.headers["x-auth-token"]]
+	storage_token = proxy.split("v1/")[1]
+        [proxy,storage_token,token]
       end
 
       # Get informations about the currect account used to connect to swift

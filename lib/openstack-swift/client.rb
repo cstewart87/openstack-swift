@@ -4,8 +4,8 @@ module Openstack
     class Client
       # Initialize method
       # It uses the authenticate method to store the tokens for future requests
-      def initialize(proxy, user, password)
-        @proxy, @user, @password = proxy, user, password
+      def initialize(proxy, user, password, token)
+        @proxy, @user, @password, @token = proxy, user, password, token
         authenticate!
       end
 
@@ -14,7 +14,7 @@ module Openstack
       # avoiding to request a new token for each request
       # It should be used to force a new token
       def authenticate!
-        @url, _, @token = Api.auth(@proxy, @user, @password)
+        @url, _, @token = Api.auth(@proxy, @user, @password, @token)
 
         if @url.blank? or @token.blank?
           raise AuthenticationError
@@ -35,6 +35,31 @@ module Openstack
           "container_count" => headers["x-account-container-count"]
         }
       end
+
+      # Returns a list of containers
+      #   options: marker, prefix, limit
+      def list_containers(options={})
+	Api.containers(@url, @token, options)
+      end
+      
+      # Returns all objects for a given container
+      #   options: marker, prefix, limit, delimiter
+      def get_objects(container, options={})
+	      Api.objects(@url, @token, container, options)
+      end
+
+      # Deletes a container
+      def delete_container(container)
+	      Api.delete_container(@url, @token, container)
+      end
+
+      # Creates a container
+      def create_container(container)
+	      Api.create_container(@url, @token, container)
+      end
+
+
+
 
       # Returns the following informations about the object:
       #   last_modified
